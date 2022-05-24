@@ -10,14 +10,24 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:gitty.helloWorld"
+		"onCommand:gitty.add_worktree",
+		"onCommand:gitty.remove_worktree",
+		"onCommand:gitty.list_worktrees"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "gitty.helloWorld",
-				"title": "Hello World"
+				"command": "gitty.add_worktree",
+				"title": "gitty: Add Worktree"
+			},
+			{
+				"command": "gitty.remove_worktree",
+				"title": "gitty: Remove Worktree"
+			},
+			{
+				"command": "gitty.list_worktrees",
+				"title": "gitty: List Worktrees"
 			}
 		]
 	},

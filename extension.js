@@ -8,7 +8,7 @@ function exec(cmd, opts = {}) {
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 
-const _cwd = () => vscode.workspace.workspaceFolders[0].uri.fsPath;
+const _cwd = () => vscode.workspace.rootPath;
 
 const _str2arr = (str) => {
 	return str
@@ -24,7 +24,10 @@ const _exec = async (cmd, opts = {}) => {
 
 const _wtrees = async () => await _exec("git worktree list");
 
-const _branches = async () => await _exec("git branch -a");
+const _branches = async () => {
+	const s = await _exec("git branch -a");
+	return s.map((x) => x.replace(/^remotes\//g, "").trim());
+};
 
 const _wt_cur_dir = async () => {
 	const res = await _exec("git rev-parse --show-toplevel");
@@ -53,26 +56,46 @@ const _ui_select = async (placeHolder, options) => {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "Gitty" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand("gitty.helloWorld", function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage("Hello World from gitty!");
-	});
 
 	const addWT = vscode.commands.registerCommand("gitty.add_worktree", async () => {
 		const branches = _branches();
+		let name = await _ui_input("Add worktree directory name (optional)");
+		const custom = "Enter SHA";
+		const selection = await _ui_select("Select base for new worktree", [
+			custom,
+			...(await branches),
+		]);
+		const base = selection === (custom ? await _ui_input() : selection).trim();
 
+		if (!base) return;
+
+		name = name.trim() || "";
+		await _exec("git worktree add " + name + " " + base);
+		// _ui_alert("Created worktree for " + base);
+		const base_dir = await _cwd();
+		await _exec("code .", { cwd: base_dir + "/" + (name || base) });
 	});
 
-	context.subscriptions.push(disposable, addWT);
+	const removeWT = vscode.commands.registerCommand("gitty.remove_worktree", async () => {
+		const wtrees = await _wtrees();
+		const selection = await _ui_select("Select worktree to remove", wtrees);
+
+		if (!selection) return;
+
+		await _exec("git worktree remove '" + selection + "'");
+		_ui_alert("Removed worktree at " + selection);
+	});
+
+	const listWT = vscode.commands.registerCommand("gitty.list_worktrees", async () => {
+		const wtrees = await _wtrees();
+		const selection = await _ui_select("Select worktree to open", wtrees);
+
+		if (!selection) return;
+
+		await _exec("code .", { cwd: selection });
+	});
+
+	context.subscriptions.push(addWT, removeWT, listWT);
 }
 
 // this method is called when your extension is deactivated
