@@ -20,7 +20,7 @@ This might be not super user-friendly.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+Seems to be working for me lol.
 
 ### 1.0.0
 
