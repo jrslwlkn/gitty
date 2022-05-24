@@ -1,6 +1,6 @@
 {
 	"name": "gitty",
-	"displayName": "Gitty",
+	"displayName": "gitty",
 	"description": "A little git worktree helper.",
 	"version": "0.0.1",
 	"engines": {

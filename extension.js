@@ -1,5 +1,8 @@
 const cp = require("child_process");
 
+/**
+ * @param {string} cmd
+ */
 function exec(cmd, opts = {}) {
 	return new Promise((res, rej) => cp.exec(cmd, opts, (err, out) => (err ? rej(err) : res(out))));
 }
@@ -10,6 +13,9 @@ const vscode = require("vscode");
 
 const _cwd = () => vscode.workspace.rootPath;
 
+/**
+ * @param {string} str
+ */
 const _str2arr = (str) => {
 	return str
 		.split("\n")
@@ -17,6 +23,9 @@ const _str2arr = (str) => {
 		.map((x) => x.trim().split(" ")[0]);
 };
 
+/**
+ * @param {string} cmd
+ */
 const _exec = async (cmd, opts = {}) => {
 	const s = await exec(cmd, { ...opts, cwd: opts.cwd || _cwd() });
 	return _str2arr(s);
@@ -39,12 +48,16 @@ const _wt_base_dir = async () => {
 	return s.replace(/\/[^\/]+$/g, "").trim();
 };
 
-const _ui_alert = (s) => vscode.window.showInformationMessage(s);
+const _ui_alert = (s = "") => s && vscode.window.showInformationMessage(s);
 
-const _ui_input = async (placeHolder) => {
+const _ui_input = async (placeHolder = "") => {
 	return vscode.window.showInputBox({ placeHolder });
 };
 
+/**
+ * @param {string} placeHolder
+ * @param {string[]} options
+ */
 const _ui_select = async (placeHolder, options) => {
 	return vscode.window.showQuickPick(options, { placeHolder });
 };
@@ -65,11 +78,11 @@ function activate(context) {
 			custom,
 			...(await branches),
 		]);
-		const base = selection === (custom ? await _ui_input() : selection).trim();
+		const base = (selection === custom ? await _ui_input() : selection).trim();
 
 		if (!base) return;
 
-		name = name.trim() || "";
+		name = name ? name.trim() : "";
 		await _exec("git worktree add " + name + " " + base);
 		// _ui_alert("Created worktree for " + base);
 		const base_dir = await _cwd();
