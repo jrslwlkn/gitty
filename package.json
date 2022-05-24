@@ -2,6 +2,8 @@
 	"name": "gitty",
 	"displayName": "gitty",
 	"description": "A little git worktree helper.",
+	"repository": "https://github.com/jrslwlkn/gitty",
+	"publisher": "jrslwlkn",
 	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.67.0"
