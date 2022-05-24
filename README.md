@@ -4,11 +4,11 @@ This is a simple extension for working with worktrees.
 
 ## Features
 
- - Add Worktree
- - Remove Worktree
- - List Worktrees
+-   Add Worktree
+-   Remove Worktree
+-   List Worktrees
 
-![gitty screenshot](screenshot.png)
+![gitty screenshot](https://i.ibb.co/5h3YD6f/Screen-Shot-2022-05-23-at-20-56-58.png)
 
 ## Requirements
 
@@ -26,4 +26,4 @@ Users appreciate release notes as you update your extension.
 
 Initial release.
 
------------------------------------------------------------------------------------------------------------
+---
